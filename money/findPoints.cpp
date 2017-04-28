@@ -34,9 +34,10 @@ void initPointPosition ()
 	int bigBackPoints = position*WidDpi*(2*BigSearchY - SmallSearchY);//大搜索回跳点数
 	int smallBackPoints = position*WidDpi*(2*SmallSearchY - 1);//小搜索回跳点数
 	int bigStep = position*BigSearchY*WidDpi,smallStep = position*SmallSearchY*WidDpi,step = position*WidDpi;//大、小及单行步长
+
 	Byte th = configSet.ValueThreshold;
 	Byte *pr = start;
-	//Byte th = 50;
+	//th = 0;
 	//头BigSearchY行特殊处理
 	pr += bigStep;
 	if(*pr > th)
@@ -46,10 +47,16 @@ void initPointPosition ()
 		{
 			if(*pr > th)
 			{
-				if(position > 0)
+				if (position > 0)
+				{
+					cout << "a" << pointY << " ";
 					return pointY;
+				}
 				else
-					return _height - pointY; 
+				{
+					cout << "b" << pointY << " ";
+					return _height - pointY;
+				}
 			}
 			pr += step;
 		}
@@ -71,10 +78,16 @@ void initPointPosition ()
 					{
 						if(*pr > th)
 						{
-							if(position > 0)
-								return (i-1)*BigSearchY + (j-1)*SmallSearchY + pointY + 1;
+							if (position > 0)
+							{
+								cout << "c" << pointY << " ";
+								return (i - 1)*BigSearchY + (j - 1)*SmallSearchY + pointY + 1;
+							}
 							else
-								return _height - (i-1)*BigSearchY - (j-1)*SmallSearchY - pointY - 1; 
+							{
+								cout << "d" << pointY << " ";
+								return _height - (i - 1)*BigSearchY - (j - 1)*SmallSearchY - pointY - 1;
+							}
 						}	
 						pr += step;
 					}
@@ -167,12 +180,14 @@ int FindUpLine(Byte * imageStart, Byte * imageEnd, float *line)
     currentStart = imageStart + StartX;//开始采样的地址
     gradientTab = _height<<1;
     //采样找边界点
+	cout << " currentStart =" << (int)currentStart << endl;
+	cout << "_pointPosition ";
     for (i = 0; i < SamplePoints; i++)
     {
 	
 		//每列都进行独立的跳跃找边
 		_pointPosition[1][i] = ColumnFindPoint(currentStart + (i << SampleStepLogX), 1);
-		
+	//	cout <<(i << SampleStepLogX) << " ";
 		//计算采样点间梯度用于剔除异常点
         if (i > 1)
         {
@@ -186,6 +201,7 @@ int FindUpLine(Byte * imageStart, Byte * imageEnd, float *line)
                 pGradient[i - 2] = gradientTab;
         }
     }
+	cout << endl;
     if(validN<10)
         return 1;//采样成功的点数过少
     SortArray(pX, validN);//排序
